@@ -65,7 +65,12 @@
 /*!
  * Defines the application data transmission duty cycle. 5s, value in [ms].
  */
+#ifdef USE_WNK8010
 uint32_t APP_TX_DUTYCYCLE = 30000;
+#else
+uint32_t APP_TX_DUTYCYCLE = 30000;
+#endif
+
 uint32_t ServerSetTDC;
 /*!
  * LoRaWAN Adaptive Data Rate
@@ -510,8 +515,9 @@ static void LORA_HasJoined(void) {
 static void Send(void) {
 	sensor_t sensor_data;
 	is_there_data = 0;
+
 	if (LORA_JoinStatus() != LORA_SET) {
-		/*Not joined, try again later*/
+		//Not joined, try again later
 		return;
 	}
 
@@ -532,18 +538,19 @@ static void Send(void) {
 	if (mode == 1) {
 		AppData.Buff[i++] = (batteryLevel_mV >> 8);     //level of battery in mV
 		AppData.Buff[i++] = batteryLevel_mV & 0xFF;
-
+#ifndef USE_WNK8010
 		AppData.Buff[i++] = (int) (sensor_data.temp1 * 10) >> 8;     //DS18B20
 		AppData.Buff[i++] = (int) (sensor_data.temp1 * 10);
 
 		AppData.Buff[i++] = (int) (sensor_data.oil) >> 8;          //oil float
 		AppData.Buff[i++] = (int) sensor_data.oil;
-
+#endif
 		if (exit_temp == 0) {
 			switch_status = HAL_GPIO_ReadPin(GPIO_EXTI14_PORT, GPIO_EXTI14_PIN);
 		}
+#ifndef USE_WNK8010
 		AppData.Buff[i++] = (switch_status << 7) | (sensor_data.in1 << 1) | (exit_temp & 0x01);
-
+#endif
 #if defined USE_SHT
 		if(bh1750flags==1)
 		{
@@ -560,6 +567,12 @@ static void Send(void) {
 			AppData.Buff[i++] =(int)(sensor_data.hum_sht*10);
 		}
 		#endif 
+#if defined USE_WNK8010
+		AppData.Buff[i++] =(int)(sensor_data.pres_wnk)>>8;
+		AppData.Buff[i++] =(int)(sensor_data.pres_wnk);
+		AppData.Buff[i++] =(int)(sensor_data.temp_wnk)>>8;
+		AppData.Buff[i++] =(int)(sensor_data.temp_wnk);
+#endif
 
 //		if(exit2_temp==0)
 //		{

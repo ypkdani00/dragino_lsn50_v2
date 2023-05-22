@@ -43,7 +43,7 @@
 /* Private variables ---------------------------------------------------------*/
 /* I2C handler declaration */
 #ifdef USE_WNK8010
-float WNK8010_pres,WNK8010_temp;
+int WNK8010_pres,WNK8010_temp;
 I2C_HandleTypeDef I2cHandle1;
 extern bool debug_flags;
 /* I2C TIMING Register define when I2C clock source is SYSCLK */
@@ -74,7 +74,7 @@ void  BSP_WNK8010_Init( void )
   
   if (debug_flags == 1) {
   			PPRINTF("\r\n");
-  			PPRINTF("Begin Init WNK8010\r\n");
+  			PPRINTF("Init WNK8010, BEGIN\r\n");
   }
 
   if(HAL_I2C_Init(&I2cHandle1) != HAL_OK)
@@ -82,12 +82,12 @@ void  BSP_WNK8010_Init( void )
     /* Initialization Error */
     Error_Handler();
     if (debug_flags == 1) {
-    	PPRINTF("Init WNK8010 ERROR\r\n");
+    	PPRINTF("Init WNK8010, ERROR\r\n");
     }
   }
 
   if (debug_flags == 1) {
-	  PPRINTF("Init WNK8010 DONE\r\n");
+	  PPRINTF("Init WNK8010, DONE\r\n");
   }
 
   /* Enable the Analog I2C Filter */
@@ -100,7 +100,7 @@ uint8_t WNK8010_Read(uint8_t rx_pres_data[], uint8_t rx_temp_data[])
 	uint8_t temp_addr_val = 0x0A;
 
 	if (debug_flags == 1) {
-		PPRINTF("Read WNK8010 raw data\r\n");
+		PPRINTF("Read WNK8010, RAW DATA\r\n");
 	}
 
 	//HAL_I2C_Mem_Read(I2C_HandleTypeDef *hi2c, uint16_t DevAddress, uint16_t MemAddress, uint16_t MemAddSize, uint8_t *pData, uint16_t Size, uint32_t Timeout);
@@ -115,14 +115,14 @@ uint8_t WNK8010_Read(uint8_t rx_pres_data[], uint8_t rx_temp_data[])
 		return HAL_I2C_STATE_ERROR;
 	}
 
-	HAL_Delay(200);
+	HAL_Delay(100);
 	if (HAL_I2C_Mem_Read(&I2cHandle1, WNK8010_ADDRESS_TEMP+1, 0x06, 0x01, rx_temp_data, 0x03, 1000)
 			!= HAL_OK) {
 		return HAL_I2C_STATE_ERROR;
 	}
 
 	if (debug_flags == 1) {
-		PPRINTF("Read WNK8010 raw data DONE\r\n");
+		PPRINTF("Read WNK8010, RAW DATA DONE\r\n");
 	}
 
 	return HAL_I2C_STATE_RESET;
@@ -134,6 +134,8 @@ void __attribute__((optimize("O0"))) tran_WNK8010data(void) {
 	uint32_t raw_pres = 0, raw_temp = 0;
 	float fadc;
 
+
+	IWDG_Refresh();
 	if (WNK8010_Read(rx_pres_data, rx_temp_data) == HAL_I2C_STATE_RESET) {
 		//pressure
 		raw_pres = (rx_pres_data[0] << 16) + (rx_pres_data[1] << 8)
@@ -143,7 +145,7 @@ void __attribute__((optimize("O0"))) tran_WNK8010data(void) {
 			raw_pres = raw_pres - 16777216;
 		}
 		fadc = (float)raw_pres/8388608.0;
-		WNK8010_pres = ((fadc-0.1)/0.8) * 1;
+		WNK8010_pres = ((fadc-0.1)/0.8) * 1000; //pressure in mmH2O
 
 		//temperature
 		raw_temp = (rx_temp_data[0] << 16) + (rx_temp_data[1] << 8)
@@ -153,14 +155,16 @@ void __attribute__((optimize("O0"))) tran_WNK8010data(void) {
 			raw_temp = raw_temp - 16777216;
 		}
 		fadc = (float)raw_temp/8388608.0;
-		WNK8010_temp = -50.0 + (fadc-0.1)/0.8 * 180.0;
+		WNK8010_temp = 10*(-50.0 + (fadc-0.1)/0.8 * 180.0); //temperature * 10
 
 		if (debug_flags == 1) {
 			PPRINTF("\r\n");
-			PPRINTF("Pressure =%0.1f\r\n", WNK8010_pres);
-			PPRINTF("Temperature =%0.1f\r\n", WNK8010_temp);
+			PPRINTF("WNK8010 data:\r\n");
+			PPRINTF("Pressure = %d\r\n", (int)(WNK8010_pres));
+			PPRINTF("Temperature = %d\r\n", (int)(WNK8010_temp));
 		}
 	}
+	IWDG_Refresh();
 }
 
 #endif

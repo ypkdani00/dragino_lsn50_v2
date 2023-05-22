@@ -93,9 +93,9 @@ typedef struct{
 	
 	uint16_t illuminance;	
 	
-	float temp_wnk;//WNK8010
+	int temp_wnk;//WNK8010
 
-	float pres_wnk;//WNK8010
+	int pres_wnk;//WNK8010
 
     uint16_t distance_mm;
 	

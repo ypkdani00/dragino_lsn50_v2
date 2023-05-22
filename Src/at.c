@@ -65,7 +65,7 @@
 #include "weight.h"
 #include "bsp.h"
 
-bool debug_flags=1;
+bool debug_flags=0;
 bool message_flags=0;
 uint8_t symbtime1_value=0;  //RX1windowtimeout 
 uint8_t flag1=0;

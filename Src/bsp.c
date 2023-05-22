@@ -100,7 +100,7 @@ tfsensor_reading_t reading_t;
 
 #ifdef USE_WNK8010
 //#define SEND_WNK8010_DATA
-extern float WNK8010_pres, WNK8010_temp;
+extern int WNK8010_pres, WNK8010_temp;
 extern I2C_HandleTypeDef I2cHandle1;
 extern I2C_HandleTypeDef I2cHandle2;
 extern I2C_HandleTypeDef I2cHandle3;
@@ -191,14 +191,6 @@ void BSP_sensor_Read(sensor_t *sensor_data, uint8_t message) {
 			}				
 		}		
 		#endif
-#ifdef USE_WNK8010
-		tran_WNK8010data();
-		sensor_data->pres_wnk = WNK8010_pres;
-		sensor_data->temp_wnk = WNK8010_temp;
-		if (message == 1) {
-			PPRINTF("WNK8010_pres:%.1f,WNK8010_temp:%.1f\r\n", sensor_data->pres_wnk, sensor_data->temp_wnk);
-		}
-#endif
 	} else if ((mode == 4) || (mode == 9)) {
 		sensor_data->temp2 = DS18B20_GetTemp_SkipRom(2);
 		if (message == 1) {
@@ -225,6 +217,14 @@ void BSP_sensor_Read(sensor_t *sensor_data, uint8_t message) {
 		HAL_GPIO_WritePin(PWR_OUT_PORT, PWR_OUT_PIN, GPIO_PIN_RESET); //Enable 5v power supply
 		for (uint16_t i = 0; i < (uint16_t) (power_time / 100); i++) {
 			HAL_Delay(100);
+#ifdef USE_WNK8010
+			tran_WNK8010data();
+			sensor_data->pres_wnk = WNK8010_pres;
+			sensor_data->temp_wnk = WNK8010_temp;
+			if (message == 1) {
+				PPRINTF("WNK8010_pres:%.1f,WNK8010_temp:%.1f\r\n", sensor_data->pres_wnk, sensor_data->temp_wnk);
+			}
+#endif
 			if ((i % 99 == 0) && (i != 0)) {
 				IWDG_Refresh();
 			}

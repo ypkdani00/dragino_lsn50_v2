@@ -48,6 +48,7 @@
  */
  
 #include "hw.h"
+#include "iwdg.h"
 #include "stm32l0xx_hal_i2c.h"
 
 #define WNK8010_ADDRESS_PRES		0xDA
