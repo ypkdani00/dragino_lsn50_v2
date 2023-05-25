@@ -38,6 +38,7 @@
 								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.optimization.level.1336629625" name="Optimization level" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.optimization.level" useByScannerDiscovery="false" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.optimization.level.value.og" valueType="enumerated"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.definedsymbols.1005023200" name="Define symbols (-D)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.definedsymbols" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="SX1276_LORA"/>
+									<listOptionValue builtIn="false" value="WNK8010_PRES_SENDRAW"/>
 									<listOptionValue builtIn="false" value="STM32L072xx"/>
 									<listOptionValue builtIn="false" value="USE_STM32L0XX_NUCLEO"/>
 									<listOptionValue builtIn="false" value="USE_HAL_DRIVER"/>

@@ -34,7 +34,8 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-
+#define WNK8010_1_0m 1000
+#define WNK8010_2_5m 2500
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
@@ -145,7 +146,12 @@ void __attribute__((optimize("O0"))) tran_WNK8010data(void) {
 			raw_pres = raw_pres - 16777216;
 		}
 		fadc = (float)raw_pres/8388608.0;
-		WNK8010_pres = ((fadc-0.1)/0.8) * 1000; //pressure in mmH2O
+#ifdef WNK8010_PRES_SENDRAW
+#warning "WNK8010, RAW PRESSURE DATA SEND"
+		WNK8010_pres = raw_pres;
+#else
+		WNK8010_pres = ((fadc-0.1525)/0.5865) * WNK8010_1_0m; //pressure in mmH2O
+#endif
 
 		//temperature
 		raw_temp = (rx_temp_data[0] << 16) + (rx_temp_data[1] << 8)
@@ -160,8 +166,8 @@ void __attribute__((optimize("O0"))) tran_WNK8010data(void) {
 		if (debug_flags == 1) {
 			PPRINTF("\r\n");
 			PPRINTF("WNK8010 data:\r\n");
-			PPRINTF("Pressure = %d\r\n", (int)(WNK8010_pres));
-			PPRINTF("Temperature = %d\r\n", (int)(WNK8010_temp));
+			PPRINTF("Pressure = %d, Pressure RAW = %d\r\n", (int)(WNK8010_pres), (int)raw_pres);
+			PPRINTF("Temperature = %d, , Temperature RAW = %d\r\n", (int)(WNK8010_temp), (int)raw_temp);
 		}
 	}
 	IWDG_Refresh();

@@ -1,3 +1,1 @@
-re-enable low power
-disable debug
 debug_flags=1

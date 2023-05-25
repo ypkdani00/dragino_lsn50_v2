@@ -568,8 +568,14 @@ static void Send(void) {
 		}
 		#endif 
 #if defined USE_WNK8010
+#ifdef WNK8010_PRES_SENDRAW
+		AppData.Buff[i++] =(int)(sensor_data.pres_wnk)>>16;
 		AppData.Buff[i++] =(int)(sensor_data.pres_wnk)>>8;
 		AppData.Buff[i++] =(int)(sensor_data.pres_wnk);
+#else
+		AppData.Buff[i++] =(int)(sensor_data.pres_wnk)>>8;
+		AppData.Buff[i++] =(int)(sensor_data.pres_wnk);
+#endif
 		AppData.Buff[i++] =(int)(sensor_data.temp_wnk)>>8;
 		AppData.Buff[i++] =(int)(sensor_data.temp_wnk);
 #endif
