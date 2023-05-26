@@ -14,6 +14,11 @@ See the code:
 - Src/bsp.c
 - Src/main.c
 
+Tha packeg peylaod is:
+- 2byte Battery Voltage
+- 3byte RAW Pressure value WNK8010
+- 2byte Temperature value WNK8010
+
 or search the #define USE_WNK8010
 
 Tested this with the LSN50-v2 and STM32CubeIDE 1.12.1.
